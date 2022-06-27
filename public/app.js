@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const dishRouter = require('./routers/dishRouter');
 const promoRouter = require('./routers/promoRouter');
 const leaderRouter = require('./routers/leaderRouter');
+const userRouter = require('./routers/userRouter');
 const dishes = require('./models/dishes');
 const assert = require("assert");
 const MongoClient = require('mongodb').MongoClient;
@@ -11,7 +12,10 @@ const createError = require("http-errors");
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
+let passport = require('passport');
+let authenticate = require('./authenticate');
 
 const app = express();
 
@@ -21,44 +25,41 @@ const url = 'mongodb://localhost:27017/conFusion';
 const connect = mongoose.connect(url);
 const url1 = 'mongodb://localhost:27017/';
 const dbname = 'conFusion';
+
 app.use(logger('dev'));
-app.use(cookieParser('12345-67890-09876-54321'));
 app.use(express.json());
 app.use(express.urlencoded({ extended:false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+   name: 'session-id',
+   secret: '12345-67890-09876-54321',
+   saveUninitialized: false,
+   resave: false,
+   store: new FileStore()
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/users', userRouter);
+
+app.get('/',(req, res, next) => {
+   res.statusCode = 200;
+   res.setHeader('Content-Type', 'text/plain');
+   res.end('Home');
+
+});
 
 function auth (req, res, next) {
-   if(!req.signedCookies.user) {
-      let authHeader = req.headers.authorization;
-      if (!authHeader) {
-         let err = new Error('You are not authenticated!');
-         res.setHeader('WWW-Authenticate', 'Basic');
-         err.status = 401;
-         next(err);
-         return;
-      }
+   console.log(req.user);
 
-      let auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
-      let user = auth[0];
-      let pass = auth[1];
-      if (user === 'admin' && pass === 'password') {
-         res.cookie('user', 'admin', {signed: true});
-         next(); // authorized
-      } else {
-         let err = new Error('Wrong login or password.Try again!');
-         res.setHeader('WWW-Authenticate', 'Basic');
-         err.status = 401;
-         next(err);
-      }
-   }else {
-      if(req.signedCookies.user === 'admin') {
-         next();
-      }else {
-         let err = new Error('You are not authenticated!');
-         err.status = 401;
-         next(err);
-      }
+   if (!req.user) {
+      let err = new Error('You are not authenticated!');
+      err.status = 403;
+      next(err);
+   }
+   else {
+      next();
    }
 }
 
@@ -81,7 +82,6 @@ connect.then((db)=> {
    console.log(err);
 });
 app.use(bodyParser.json());
-
 
 app.use('/dishes', dishRouter);
 app.use('/promotions',promoRouter);
