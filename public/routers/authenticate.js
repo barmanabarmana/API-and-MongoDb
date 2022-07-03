@@ -1,6 +1,7 @@
 let passport = require('passport');
 let LocalStrategy = require('passport-local').Strategy;
 let User = require('../models/user');
+let Dishes = require('../models/dishes');
 let JwtStrategy = require('passport-jwt').Strategy;
 let ExtractJwt = require('passport-jwt').ExtractJwt;
 let jwt = require('jsonwebtoken');
@@ -37,3 +38,13 @@ exports.jwtPassport = passport.use(new JwtStrategy(options,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+
+exports.verifyAdmin = (req,res,next) => {
+    if (req.user.admin) {
+        next();
+    } else {
+        let err = new Error("You are not authorized to perform this operation!");
+        err.status = 403;
+        return next(err);
+    }
+}
