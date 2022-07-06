@@ -35,8 +35,8 @@ server.on('listening', onListening);
  */
 
 let options = {
-  key: fs.readFileSync(__dirname+'/selfsigned.key', 'utf-8'),
-  cert: fs.readFileSync(__dirname+'/selfsigned.crt','utf-8')
+  key: fs.readFileSync(__dirname+'/certificate/selfsigned.key', 'utf-8'),
+  cert: fs.readFileSync(__dirname+'/certificate/selfsigned.crt','utf-8')
 };
 
 let secureServer = https.createServer(options, app);
