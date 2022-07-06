@@ -18,6 +18,8 @@ let passport = require('passport');
 let authenticate = require('./routers/authenticate');
 let config  = require('../config');
 
+
+//console.log("Test")
 const app = express();
 // Secure traffic only
 app.all('*', (req, res, next) => {
