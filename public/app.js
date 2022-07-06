@@ -19,8 +19,21 @@ let authenticate = require('./routers/authenticate');
 let config  = require('../config');
 
 const app = express();
+// Secure traffic only
+app.all('*', (req, res, next) => {
+   if (req.secure) {
+      return next();
+   }
+   else {
+      res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+   }
+});
 
-const port = process.env.PORT || 3000;
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.get('/',(req,res,next)=> {
+   res.json("Home")
+})
 const url = config.mongoUrl;
 
 const connect = mongoose.connect(url);
@@ -43,7 +56,7 @@ app.get('/',(req, res, next) => {
 });
 
 connect.then((db)=> {
-   console.log(`Connected to the server localhost:${port}`)
+   console.log(`Connected to server`)
 },(err) => {
    console.log(err);
 });
@@ -54,7 +67,4 @@ app.use('/promotions',promoRouter);
 app.use('/leaders',leaderRouter);
 
 
-
-app.listen(port, function () {
-   console.log('Your app is listening on port ' + port)
-});
+module.exports = app;
