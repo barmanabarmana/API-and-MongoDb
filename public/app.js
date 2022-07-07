@@ -5,6 +5,7 @@ const dishRouter = require('./routers/dishRouter');
 const promoRouter = require('./routers/promoRouter');
 const leaderRouter = require('./routers/leaderRouter');
 const userRouter = require('./routers/userRouter');
+const uploadRouter = require('./routers/uploadRouter');
 const dishes = require('./models/dishes');
 const assert = require("assert");
 const MongoClient = require('mongodb').MongoClient;
@@ -19,7 +20,6 @@ let authenticate = require('./routers/authenticate');
 let config  = require('../config');
 
 
-//console.log("Test")
 const app = express();
 // Secure traffic only
 app.all('*', (req, res, next) => {
@@ -67,6 +67,7 @@ app.use(bodyParser.json());
 app.use('/dishes', dishRouter);
 app.use('/promotions',promoRouter);
 app.use('/leaders',leaderRouter);
+app.use("/imageUpload",uploadRouter)
 
 
 module.exports = app;
