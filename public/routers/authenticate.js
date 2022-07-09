@@ -1,12 +1,13 @@
-let passport = require('passport');
-let LocalStrategy = require('passport-local').Strategy;
-let User = require('../models/user');
-let Dishes = require('../models/dishes');
-let JwtStrategy = require('passport-jwt').Strategy;
-let ExtractJwt = require('passport-jwt').ExtractJwt;
-let jwt = require('jsonwebtoken');
-
-let config = require('../../config.js');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user');
+const Dishes = require('../models/dishes');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwt = require('jsonwebtoken');
+const FacebookTokenStrategy = require('passport-facebook-token');
+//const config = require(dotenv).config()
+const config = require('../../config.js');
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -48,3 +49,32 @@ exports.verifyAdmin = (req,res,next) => {
         return next(err);
     }
 }
+
+exports.facebookPassport =  passport.use(new FacebookTokenStrategy({
+    clientID: config.facebook.clientId,
+    clientSecret: config.facebook.clientSecret
+    }, (accessToken,refreshToken,profile,done) => {
+        User.findOne({facebookId: profile.id},(err, user) => {
+           if(err) {
+               return done(err,false);
+           }
+           if(!err && user !== null) {
+               return done(null, user);
+           }
+           else {
+               user = new User({ username: profile.displayName });
+               user.facebookId = profile.id;
+               user.firstname = profile.name.givenName;
+               user.lastname = profile.name.familyName;
+               user.save((err,user) => {
+                  if(err) {
+                      return done(err,false)
+                  }else {
+                      return done(null,user);
+                  }
+               });
+
+           }
+        });
+    }
+));

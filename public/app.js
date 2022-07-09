@@ -17,7 +17,7 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 let passport = require('passport');
 let authenticate = require('./routers/authenticate');
-let config  = require('../config');
+require('dotenv').config();
 
 
 const app = express();
@@ -36,7 +36,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.get('/',(req,res,next)=> {
    res.json("Home")
 })
-const url = config.mongoUrl;
+const url = process.env.MONGO_URL;
 
 const connect = mongoose.connect(url);
 
@@ -56,6 +56,10 @@ app.get('/',(req, res, next) => {
    res.end('Home');
 
 });
+app.get('/:filename', function(req, res) {
+   res.statusCode = 200;
+   res.sendFile(`${__dirname }\\${req.params.filename}`)
+});
 
 connect.then((db)=> {
    console.log(`Connected to server`)
@@ -68,6 +72,7 @@ app.use('/dishes', dishRouter);
 app.use('/promotions',promoRouter);
 app.use('/leaders',leaderRouter);
 app.use("/imageUpload",uploadRouter)
+
 
 
 module.exports = app;

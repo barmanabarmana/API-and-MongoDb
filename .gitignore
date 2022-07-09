@@ -1,3 +1,5 @@
 node_modules
 sessions
 bin/certificate
+.env
+config.js
