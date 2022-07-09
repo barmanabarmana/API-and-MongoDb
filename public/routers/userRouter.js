@@ -2,8 +2,8 @@ let express = require('express');
 const bodyParser = require('body-parser');
 const User = require('../models/user');
 let passport = require('passport');
-let authenticate = require('./authenticate');
-const cors = require('./cors');
+let authenticate = require('./middleware/authenticate');
+const cors = require('./middleware/cors');
 
 
 let router = express.Router();

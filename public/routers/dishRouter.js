@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const Dishes = require('../models/dishes.js')
-const authenticate = require('./authenticate');
-const cors = require('./cors');
+const authenticate = require('./middleware/authenticate');
+const cors = require('./middleware/cors');
 
 const dishRouter = express.Router();
 

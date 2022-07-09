@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const promotions = require('../models/promotions.js')
-const authenticate = require('./authenticate');
-const cors = require('./cors');
+const authenticate = require('./middleware/authenticate');
+const cors = require('./middleware/cors');
 const promoRoute = express.Router();
 
 

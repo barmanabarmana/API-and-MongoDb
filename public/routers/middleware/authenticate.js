@@ -1,13 +1,13 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/user');
-const Dishes = require('../models/dishes');
+const User = require('../../models/user');
+const Dishes = require('../../models/dishes');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 const FacebookTokenStrategy = require('passport-facebook-token');
 //const config = require(dotenv).config()
-const config = require('../../config.js');
+const config = require('../../../config.js');
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());

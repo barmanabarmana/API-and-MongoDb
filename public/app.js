@@ -16,7 +16,7 @@ const logger = require('morgan');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 let passport = require('passport');
-let authenticate = require('./routers/authenticate');
+let authenticate = require('./routers/middleware/authenticate');
 require('dotenv').config();
 
 
