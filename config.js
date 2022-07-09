@@ -6,3 +6,4 @@ module.exports = {
         clientSecret: '40cb47d134303cce808094d2ee7c7bf5'
     }
 }
+
