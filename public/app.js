@@ -6,6 +6,7 @@ const promoRouter = require('./routers/promoRouter');
 const leaderRouter = require('./routers/leaderRouter');
 const userRouter = require('./routers/userRouter');
 const uploadRouter = require('./routers/uploadRouter');
+const favoriteRouter = require('./routers/favoriteRouter');
 const dishes = require('./models/dishes');
 const assert = require("assert");
 const MongoClient = require('mongodb').MongoClient;
@@ -56,7 +57,7 @@ app.get('/',(req, res, next) => {
    res.end('Home');
 
 });
-app.get('/:filename', function(req, res) {
+app.get('/file/:filename', function(req, res) {
    res.statusCode = 200;
    res.sendFile(`${__dirname }\\${req.params.filename}`)
 });
@@ -69,6 +70,7 @@ connect.then((db)=> {
 app.use(bodyParser.json());
 
 app.use('/dishes', dishRouter);
+app.use('/favorites',favoriteRouter);
 app.use('/promotions',promoRouter);
 app.use('/leaders',leaderRouter);
 app.use("/imageUpload",uploadRouter)
